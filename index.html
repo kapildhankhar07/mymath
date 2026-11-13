@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Calculation Master</title>
+<style>
+:root{--bg:#f5f6f2;--c:#fff;--ink:#1c2626;--mu:#5c6b6b;--ac:#0e6b62;--ac2:#e3f1ee;--bd:#d9dfdb;--bad:#b3261e;--ok:#17803d;--wa:#b45309}
+[data-theme=dark]{--bg:#121816;--c:#1a2220;--ink:#e8efec;--mu:#9bb0aa;--ac:#4fc3b3;--ac2:#1f3532;--bd:#2c3a37;--bad:#ff8a80;--ok:#6fd08c;--wa:#f0b25a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Segoe UI",system-ui,sans-serif;display:flex;min-height:100vh}
+nav{width:220px;background:var(--c);border-right:1px solid var(--bd);padding:12px;position:sticky;top:0;height:100vh;overflow:auto;flex:none}
+nav h1{font:700 19px Georgia,serif;margin:4px 8px 12px}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);padding:10px;border-radius:8px;font:inherit;cursor:pointer}
+nav button.on{background:var(--ac2);color:var(--ac);font-weight:600}
+#sv{display:block;margin:12px 8px;color:var(--mu);font-size:13px}
+main{flex:1;padding:20px;max-width:1000px;min-width:0}
+h2{font:700 26px Georgia,serif;margin:0 0 14px}h3{margin:0 0 6px}
+.card{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.st{background:var(--c);border:1px solid var(--bd);border-radius:10px;padding:12px}.st b{display:block;font:700 24px Georgia,serif}.st span,small,.mu{color:var(--mu);font-size:13px}
+.b,.g2{font:inherit;padding:9px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--ac);margin:3px 4px 3px 0}
+.b{background:var(--ac);color:var(--c)}.g2{background:none;color:var(--ac)}
+input,select{font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--c);color:var(--ink);max-width:100%}
+label{display:block;margin:8px 0 2px;font-size:14px;color:var(--mu)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row .tm{margin-left:auto;font:700 20px Georgia,serif}
+.q{font:700 34px Georgia,serif;margin:18px 0;word-break:break-word}
+.opt{display:block;width:100%;text-align:left;font:inherit;font-size:20px;padding:12px;margin:6px 0;border:1px solid var(--bd);border-radius:8px;background:var(--c);color:var(--ink);cursor:pointer}
+.opt.ok{border-color:var(--ok);background:var(--ac2)}.opt.bad{border-color:var(--bad)}
+.fb{border-left:4px solid;padding:6px 12px;margin:10px 0}.fb.ok{border-color:var(--ok)}.fb.bad{border-color:var(--bad)}
+.bar{height:8px;background:var(--ac2);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac)}
+.bars{display:flex;gap:4px;align-items:flex-end;height:120px;margin:8px 0 16px}.bars div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}.bars i{width:100%;background:var(--ac);border-radius:3px 3px 0 0;min-height:1px}.bars small{font-size:10px}
+.tag{font-size:12px;padding:1px 8px;border-radius:10px;background:var(--ac2);color:var(--ac)}
+:focus-visible{outline:3px solid var(--wa);outline-offset:2px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:8px;display:none;z-index:9}
+.b,.g2{min-height:44px}nav button em{font-style:normal}nav button span{display:inline-block;width:24px}#inp{font-size:24px;width:150px}
+@media(max-width:760px){html{-webkit-text-size-adjust:100%}body{display:block;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+nav{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;height:auto;z-index:5;display:flex;gap:2px;overflow-x:auto;overflow-y:hidden;padding:4px 4px calc(4px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--bd);scrollbar-width:none}nav::-webkit-scrollbar{display:none}
+nav h1{display:none}#sv{position:fixed;top:4px;right:10px;margin:0;font-size:11px;z-index:6}
+nav button{flex:0 0 auto;width:auto;min-width:76px;text-align:center;padding:6px 4px;font-size:11px;line-height:1.25;min-height:52px}nav button span{display:block;width:auto;font-size:20px}nav button em{display:block}
+main{padding:22px 12px 12px}h2{font-size:22px}.q{font-size:28px;margin:14px 0}
+input,select{font-size:16px;width:100%;min-height:46px;margin-bottom:4px}#inp{font-size:26px;width:100%}
+.b,.g2{min-height:48px;padding:10px 16px}.card{padding:14px}.card>.b,#ans+.b,#fb .b{width:100%;margin:6px 0}
+.opt{font-size:22px;padding:16px;min-height:56px}.g{grid-template-columns:repeat(2,1fr)}.st b{font-size:22px}}
+</style></head><body>
+<nav id="nav" aria-label="Main"></nav><main id="main"></main><div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s),R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,P=a=>a[R(0,a.length-1)],main=$('#main');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const f=n=>String(+(+n).toFixed(3)),dk=t=>{const d=new Date(t);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+const CATS={add:'Addition',sub:'Subtraction',mul:'Multiplication',div:'Division',sq:'Squares',cu:'Cubes',fr:'Fractions to %',pc:'Percentages',sim:'Simplification',apx:'Approximation',mix:'Mixed'};
+const DIF=['Beginner','Easy','Medium','Hard','Expert'];
+const V={dash:['Dashboard','▦'],road:['Learning Roadmap','☰'],tri:['Calculation Tricks','✦'],prac:['Practice Arena','✎'],test:['Speed Test','⏱'],mis:['Mistake Notebook','✖'],rev:['Revision Center','↻'],ana:['Performance Analytics','▲'],set:['Settings','⚙']};
+const DEF=()=>({settings:{theme:'light',sound:true,tq:30,tm:20,ta:80,diff:1,lim:0},att:[],mist:[],prog:{},tests:[],sess:[]});
+let S=DEF(),db=null,cur='dash',run=null,tm=null,sT=null,rv=null,mf={s:'',c:''};
+/* ---------- storage ---------- */
+const idb=()=>new Promise(r=>{try{const q=indexedDB.open('calcmaster',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>{db=q.result;r()};q.onerror=()=>r()}catch(e){r()}});
+const dbGet=k=>new Promise(r=>{try{if(!db)return r(JSON.parse(localStorage.getItem('cm_'+k)||'null'));const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+function setSt(m,bad){const e=$('#sv');if(e){e.textContent=m;e.style.color=bad?'var(--bad)':''}}
+function save(){setSt('Saving…');try{if(db){const t=db.transaction('kv','readwrite'),o=t.objectStore('kv');for(const k in S)o.put(S[k],k);t.oncomplete=()=>setSt('✓ Saved');t.onerror=t.onabort=()=>setSt('Save failed: export a backup',1)}else{for(const k in S)localStorage.setItem('cm_'+k,JSON.stringify(S[k]));setSt('✓ Saved (local storage)')}}catch(e){setSt('Save failed: export a backup',1)}}
+const sv=()=>{clearTimeout(sT);sT=setTimeout(save,300)};
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2500)}
+let ac=null;function beep(ok){if(!S.settings.sound)return;try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=ok?660:200;g.gain.value=.06;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.12)}catch(e){}}
+/* ---------- question generator ---------- */
+function gen(c,d){if(c=='mix')c=P(['add','sub','mul','div','sq','cu','fr','pc','sim','apx']);
+const dg=[2,2,3,4,5][d],lo=10**(dg-1),hi=10**dg-1;let q,a,b,x,e,s,n,p,N;
+if(c=='add'){a=R(lo,hi);b=R(lo,hi);x=a+b;q=a+' + '+b;e=`${a} + ${b} = ${x}. Add from the left, place by place.`;s='Round one number to a friendly value, add, then adjust the difference.'}
+else if(c=='sub'){a=R(lo,hi);b=R(lo,a);x=a-b;q=a+' − '+b;e=`${a} − ${b} = ${x}. Check: ${x} + ${b} = ${a}.`;s='Subtract a rounded number, then give back the extra.'}
+else if(c=='mul'){const sp={5:'×10, then ÷2',9:'×10, then subtract the number',11:'number×10 + number',25:'×100, then ÷4',50:'×100, then ÷2',125:'×1000, then ÷8'};
+if(d==0){a=R(2,12);b=R(2,12)}else if(R(0,2)==0){b=P([5,9,11,25,50,125]);a=R(12,[0,40,99,300,999][d])}else{a=R(12,[0,30,99,199,999][d]);b=R(11,[0,19,45,99,99][d])}
+x=a*b;q=a+' × '+b;const t=Math.floor(b/10)*10,u=b%10;e=sp[b]?`×${b} trick: ${sp[b]}. ${a} × ${b} = ${x}.`:`${a} × ${b} = ${a}×${t} + ${a}×${u} = ${a*t} + ${a*u} = ${x}.`;s=sp[b]?`×${b}: ${sp[b]}.`:'Split the smaller number into tens and units.'}
+else if(c=='div'){b=R(2,[9,12,25,50,99][d]);n=R(2,[12,50,150,500,999][d]);a=b*n;x=n;q=a+' ÷ '+b;e=`${a} ÷ ${b} = ${n}, because ${b} × ${n} = ${a}.`;s='÷5: ×2 then ÷10. ÷25: ×4 then ÷100. ÷4: halve twice.'}
+else if(c=='sq'){n=R(11,[25,35,50,70,99][d]);x=n*n;q=n+'²';const k=n%10<=5?n%10:10-n%10;e=n%10==5?`${n}²: ${(n-5)/10} × ${(n-5)/10+1} = ${(n-5)/10*((n-5)/10+1)}, then append 25 → ${x}.`:`${n}² = (${n}−${k})(${n}+${k}) + ${k}² = ${(n-k)*(n+k)} + ${k*k} = ${x}.`;s='Ends in 5: t×(t+1) then 25. Otherwise (n−k)(n+k)+k² using the nearest multiple of 10.'}
+else if(c=='cu'){n=R(2,[10,15,20,25,30][d]);x=n**3;q=n+'³';e=`${n}² = ${n*n}, then × ${n} = ${x}.`;s='Cube = square × number. Remember 1³ to 10³.'}
+else if(c=='fr'){b=P([2,4,5,8,10,16,20,25,40]);a=R(1,d>2?2*b:b-1);x=Math.round(a*100000/b)/1000;q=a+'/'+b+' as a percentage (%)';e=`${a}/${b} = ${a} × (100/${b})% = ${f(x)}%.`;s='Learn 1/2=50, 1/4=25, 1/5=20, 1/8=12.5, 1/16=6.25, 1/20=5, 1/25=4, 1/40=2.5 (%), then multiply.'}
+else if(c=='pc'){const m=[5,10,25,60,99][d];if(d<3){p=5*R(1,d?10:4);N=20*R(1,m)}else{p=R(2,98);N=100*R(1,m)}x=p*N/100;q=p+'% of '+N;e=`${p}% of ${N} = ${p} × ${N} ÷ 100 = ${x}.`;s='Build from 10%, 5%, 1%. Also x% of y = y% of x.'}
+else if(c=='sim'){const A=R(10,50),B=R(2,9),C=R(10,50),D=R(2,30),E=R(2,12),F=R(2,12);
+if(d==0){x=A+B*C;q=`${A} + ${B} × ${C}`;e=`BODMAS: multiply first. ${B}×${C} = ${B*C}; ${A} + ${B*C} = ${x}.`}
+else if(d==1){x=A*B-C;q=`${A} × ${B} − ${C}`;e=`${A}×${B} = ${A*B}; ${A*B} − ${C} = ${x}.`}
+else if(d==2){x=(A+D)*B-C;q=`(${A} + ${D}) × ${B} − ${C}`;e=`Brackets: ${A+D}; × ${B} = ${(A+D)*B}; − ${C} = ${x}.`}
+else if(d==3){x=A*B+E*F-D;q=`${A} × ${B} + ${E} × ${F} − ${D}`;e=`${A*B} + ${E*F} − ${D} = ${x}.`}
+else{const t=R(2,9),u=R(2,9),sum=t*R(5,40),p1=R(1,sum-1);x=sum*u/t;q=`(${p1} + ${sum-p1}) × ${u} ÷ ${t}`;e=`Brackets: ${sum}; × ${u} = ${sum*u}; ÷ ${t} = ${x}.`}
+s='BODMAS: Brackets, Orders, Division/Multiplication (left to right), Addition/Subtraction.'}
+else{const u=d<2?10:100,rn=v=>Math.round(v/u)*u,L=d<2?11:101,H=d<2?999:9999,A=R(L,H),B=R(L,H),C=R(L,H);x=rn(A)+rn(B)-rn(C);q=`Round each number to the nearest ${u} (halves round up), then calculate: ${A} + ${B} − ${C}`;e=`${rn(A)} + ${rn(B)} − ${rn(C)} = ${x}.`;s='Round every number first, then do one clean calculation.'}
+return{q:c=='fr'||c=='apx'?q:q+' = ?',ans:x,expl:e,sc:s,cat:c,d}}
+function opts(x){const o=new Set([x]),int=Number.isInteger(x);let g=0;while(o.size<4&&g++<200){const dl=int?P([1,2,3,5,10,20,Math.max(1,Math.round(Math.abs(x)/10)),Math.max(1,Math.round(Math.abs(x)/100))]):P([.5,.25,1,2.5,5,10]);const c=+(x+P([-1,1])*dl).toFixed(3);if(c>=0||x<0)o.add(c)}const a=[...o];for(let i=a.length-1;i>0;i--){const j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a}
+/* ---------- run engine (practice, test, retry) ---------- */
+function stop(){clearInterval(tm);run=null}
+function startRun(o){stop();run={o,...o,i:0,log:[],tel:0,qel:0,paused:false,done:false};tm=setInterval(tick,250);showQ()}
+const mmss=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const setT=s=>{const e=$('#tm');if(e)e.textContent=mmss(s)};
+function tick(){const r=run;if(!r||r.paused||r.done)return;r.qel+=250;r.tel+=250;
+if(r.test){const L=r.total-r.tel/1000;if(L<=0)return finish();setT(L)}else if(r.lim){if(!r.answered){const L=r.lim-r.qel/1000;if(L<=0)return submit(null,'time');setT(L)}}else if(!r.answered)setT(r.qel/1000)}
+function showQ(){const r=run;if(r.i>=r.n)return finish();r.q=r.forced||(r.pre?r.pre[r.i]:gen(r.cat,r.d));r.forced=null;r.answered=false;r.qel=0;r.opts=r.mcq?opts(r.q.ans):null;
+main.innerHTML=`<div class="card"><div class="row"><b>Question ${r.i+1} of ${r.n}</b><span class="tm" id="tm"></span><button class="g2" id="pb" onclick="pause()">Pause</button><button class="g2" onclick="endRun()">End</button></div><div class="bar"><i style="width:${r.i/r.n*100}%"></i></div><div class="q">${esc(r.q.q)}</div><div id="ans">`+(r.mcq?r.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})">${i+1}. ${f(o)}</button>`).join(''):`<input id="inp" type="number" step="any" inputmode="decimal" aria-label="Your answer"> <button class="b" onclick="sub()">Submit</button>`)+`</div>`+(r.test?`<button class="g2" onclick="submit(null,'skip')">Skip</button>`:'')+`<div id="fb"></div></div>`;
+const e=$('#inp');if(e)e.focus();if(r.test)setT(r.total-r.tel/1000);else if(r.lim)setT(r.lim)}
+function pause(){const r=run;r.paused=!r.paused;$('#pb').textContent=r.paused?'Resume':'Pause';$('#ans').style.visibility=r.paused?'hidden':'visible'}
+function pick(i){if(run&&!run.answered&&!run.paused)submit(run.opts[i])}
+function sub(){const v=$('#inp').value;if(v===''||isNaN(v))return toast('Enter a number first');submit(parseFloat(v))}
+function submit(v,mode){const r=run;if(!r||r.answered||r.paused)return;r.answered=true;const q=r.q,sec=+(r.qel/1000).toFixed(1),ok=v!==null&&Math.abs(v-q.ans)<.005;
+if(mode=='skip')r.log.push({q,v:null,ok:false,skip:1,sec});else{r.log.push({q,v,ok,sec});S.att.push({t:Date.now(),cat:q.cat,ok,sec,d:q.d});if(S.att.length>6000)S.att.shift();if(!ok)addMis(q,v);if(!r.test)beep(ok);sv()}
+if(r.test){r.i++;return showQ()}
+document.querySelectorAll('.opt').forEach((b,i)=>{b.disabled=true;if(Math.abs(r.opts[i]-q.ans)<.005)b.classList.add('ok');else if(r.opts[i]===v)b.classList.add('bad')});
+$('#fb').innerHTML=`<div class="fb ${ok?'ok':'bad'}"><b>${ok?'Correct':v===null?'Time is up':'Not quite'}</b>. Answer: ${f(q.ans)}<p>${esc(q.expl)}</p><p><b>Shortcut:</b> ${esc(q.sc)}</p>${ok?'':`<p>Concept: ${CATS[q.cat]}. Saved to your Mistake Notebook and scheduled for revision. Possible causes (suggestions only): a place-value slip, rushing, or an unfamiliar shortcut.</p>`}</div><button class="b" onclick="nxt()" id="nx">${r.i+1>=r.n?'Finish':'Next'}</button><button class="g2" onclick="similar()">Try a similar question</button>`;$('#nx').focus()}
+function nxt(){run.i++;showQ()}
+function similar(){const r=run;r.forced=gen(r.q.cat,r.q.d);r.n++;nxt()}
+function endRun(){if(run.log.filter(x=>!x.skip).length)finish();else{run.done=true;stop();go('dash')}}
+function addMis(q,v){const now=Date.now();let m=S.mist.find(x=>x.q==q.q);if(m){m.count++;m.user=v;m.date=now;m.status='pending';m.stage=0;m.due=now+144e5}else S.mist.push({id:now+R(0,999),q:q.q,ans:q.ans,user:v,cat:q.cat,d:q.d,expl:q.expl,sc:q.sc,date:now,count:1,status:'pending',stage:0,due:now+144e5})}
+function finish(){const r=run;if(!r||r.done)return;r.done=true;clearInterval(tm);
+const at=r.log.filter(x=>!x.skip),ok=at.filter(x=>x.ok).length,wr=at.length-ok,sk=r.n-at.length,secs=Math.max(1,Math.round(r.tel/1000)),acc=at.length?Math.round(ok/at.length*100):0,avg=at.length?+(at.reduce((s,x)=>s+x.sec,0)/at.length).toFixed(1):0,qpm=+(at.length/(secs/60)).toFixed(1),score=ok*4-wr;
+S.sess.push({t:Date.now(),kind:r.kind,cat:r.cat,n:at.length,ok,secs});let best='',msg='';
+if(r.test){const pb=Math.max(-1e9,...S.tests.map(t=>t.score));S.tests.push({t:Date.now(),dur:r.total,n:r.n,att:at.length,ok,wr,sk,acc,avg,qpm,score});best=S.tests.length==1||score>pb?'New personal best!':'Personal best: '+pb}
+if(r.topic){if(at.length>=r.n&&acc>=80){S.prog[r.topic]={t:Date.now()};msg=`Topic test passed (${acc}%). "${r.topic}" is now marked complete.`}else msg=`Topic test needs 80% or more on all ${r.n} questions to mark the topic complete. You scored ${acc}%.`}
+const byc={};r.log.filter(x=>!x.skip&&!x.ok).forEach(x=>byc[x.q.cat]=(byc[x.q.cat]||0)+1);const wk=Object.keys(byc).sort((a,b)=>byc[b]-byc[a])[0];
+const rec=!at.length?'':acc<80?`Next session: stay on ${wk?CATS[wk]:CATS[r.cat]||'this topic'} at an easier level and aim for 80% accuracy before speed.`:avg>20?'Accuracy is solid. Next: try the same topic with a time limit per question.':'Accuracy and speed are good. Next: move up one difficulty level.';
+save();const miss=r.log.filter(x=>!x.ok);
+main.innerHTML=`<h2>${r.test?'Speed test results':'Session report'}</h2><div class="g"><div class="st"><b>${at.length}</b><span>Attempted</span></div><div class="st"><b>${ok}</b><span>Correct</span></div><div class="st"><b>${wr}</b><span>Wrong</span></div><div class="st"><b>${sk}</b><span>Skipped</span></div><div class="st"><b>${acc}%</b><span>Accuracy</span></div><div class="st"><b>${avg}s</b><span>Avg per question</span></div><div class="st"><b>${qpm}</b><span>Questions/min</span></div>${r.test?`<div class="st"><b>${score}</b><span>Score (4 per correct, −1 per wrong)</span></div>`:''}</div><div class="card">${best?`<p><b>${best}</b></p>`:''}${msg?`<p>${esc(msg)}</p>`:''}<p>${esc(rec)}</p><button class="b" onclick="startRun(run.o)">Practice again</button><button class="g2" onclick="go('dash')">Dashboard</button></div>`+(miss.length?`<div class="card"><h3>Review (${miss.length})</h3>`+miss.map(x=>`<p><b>${esc(x.q.q)}</b> You: ${x.v==null?'no answer':f(x.v)}. Answer: ${f(x.q.ans)}.<br><small>${esc(x.q.expl)}</small></p>`).join('')+`</div>`:'')}
+document.addEventListener('keydown',e=>{const r=run;if(!r||r.done||e.target.tagName=='SELECT')return;if(e.key=='Enter'){if(r.answered&&!r.test&&$('#nx')&&document.activeElement.tagName!='BUTTON')nxt();else if($('#inp')&&!r.answered)sub()}else if(r.mcq&&/^[1-4]$/.test(e.key))pick(+e.key-1)});
+/* ---------- stats helpers ---------- */
+const st=a=>{const n=a.length,ok=a.filter(x=>x.ok).length;return{n,ok,acc:n?Math.round(ok/n*100):0,avg:n?+(a.reduce((s,x)=>s+x.sec,0)/n).toFixed(1):0}};
+const dueList=()=>S.mist.filter(m=>m.status!='understood'&&m.due<=Date.now()).sort((a,b)=>a.due-b.due);
+const bar=p=>`<div class="bar"><i style="width:${Math.min(100,p)}%"></i></div>`;
+function byCat(a){const o={};a.forEach(x=>(o[x.cat]=o[x.cat]||[]).push(x));return Object.keys(o).map(k=>({k,...st(o[k])}))}
+/* ---------- data ---------- */
+const LV=[['Level 1: Foundation',[['Number system basics','add','Place value, even/odd, prime and composite numbers.'],['Addition','add','Add left to right; use rounding and adjustment.'],['Subtraction','sub','Subtract by rounding; check by adding back.'],['Multiplication','mul','Break numbers into tens and units.'],['Division','div','Division is the reverse of multiplication; factor the divisor.'],['Multiplication tables (1–30)','mul','Know tables cold; they are the base of every shortcut.'],['Squares (1–50)','sq','Memorise 1–25, derive the rest with (n−k)(n+k)+k².'],['Cubes (1–30)','cu','Cube = square × number; memorise 1³–10³.']]],
+['Level 2: Number mastery',[['Fractions and percentage conversion','fr','1/n as a percentage is the key table to remember.'],['Divisibility rules','div','By 3 or 9: digit sum. By 11: alternating digit sum. By 4: last two digits.'],['Factors and multiples','div','Test factors up to √n. Practice uses division questions.'],['LCM and HCF','div','LCM×HCF = product of two numbers. Practice uses division questions.'],['Complements and rounding','apx','Complement to 10/100 speeds up addition and subtraction.']]],
+['Level 3: Shortcuts',[['Multiply by 5, 9, 11, 25, 50, 125','mul','Use ×10÷2, ×10−n, 10n+n, ×100÷4, ×100÷2, ×1000÷8.'],['Squares ending in 5 / near 50 and 100','sq','t×(t+1) then 25; or (n−k)(n+k)+k².'],['Difference of squares','sq','a²−b² = (a−b)(a+b).'],['Fast addition and subtraction','add','Compensation: 498+367 = 500+367−2.'],['Division shortcuts','div','÷5 = ×2÷10; ÷25 = ×4÷100; ÷125 = ×8÷1000.']]],
+['Level 4: Banking exam calculations',[['Percentage and percentage change','pc','x% of y = y% of x; build from 10%, 5% and 1%.'],['Profit, loss, simple and compound interest','pc','Formulas are in the Tricks library; practice uses percentage questions.'],['Simplification and BODMAS','sim','Brackets, Orders, Division/Multiplication, Addition/Subtraction.'],['Approximation','apx','Round first, calculate once.']]],
+['Level 5: Advanced speed',[['Mixed calculations','mix','All question types shuffled.'],['Exam-style simplification sets','sim','Multi-step BODMAS under time pressure.']]]];
+const TR=[['Multiply by 5','mul','n × 5 = n × 10 ÷ 2','48 × 5 = 480 ÷ 2 = 240','Any number','Single digits: just use your tables.'],
+['Multiply by 9','mul','n × 9 = n × 10 − n','37 × 9 = 370 − 37 = 333','Any number','When the other number is also near 10: use the near-base method.'],
+['Multiply a 2-digit number by 11','mul','ab × 11 = a, (a+b), b (carry if a+b ≥ 10)','54 × 11: 5, 9, 4 = 594; 78 × 11: 7, 15, 8 → 858','2-digit numbers','Longer numbers need more careful carrying.'],
+['Multiply by 25','mul','n × 25 = n × 100 ÷ 4','48 × 25 = 4800 ÷ 4 = 1200','Any number','Skip it if the number is not easy to divide by 4 mentally.'],
+['Multiply by 50','mul','n × 50 = n × 100 ÷ 2','36 × 50 = 3600 ÷ 2 = 1800','Any number','—'],
+['Multiply by 125','mul','n × 125 = n × 1000 ÷ 8','24 × 125 = 24000 ÷ 8 = 3000','Multiples of 8 are easiest','When n is not near a multiple of 8.'],
+['Multiply by 99 or 101','mul','n × 99 = n × 100 − n; n × 101 = n × 100 + n','47 × 99 = 4700 − 47 = 4653','Numbers next to 100','Not for numbers far from 100.'],
+['Square a number ending in 5','sq','(10t+5)² = t(t+1) followed by 25','35² : 3 × 4 = 12 → 1225','Ends in 5','Other endings.'],
+['Square near a multiple of 10','sq','n² = (n−k)(n+k) + k²','47² = (47−3)(47+3) + 3² = 44 × 50 + 9 = 2209','k is small (1–5)','Large k: the correction k² gets heavy.'],
+['Difference of squares','sq','a² − b² = (a − b)(a + b)','87² − 13² = 74 × 100 = 7400','Two squares being subtracted','Sums of squares cannot be factored this way.'],
+['Multiply two numbers just below 100','mul','(100−a)(100−b): (100−a−b) | a×b','97 × 94: 100−3−6 = 91 | 3×6 = 18 → 9118','Both slightly below 100','If a×b is 100 or more, carry into the left part.'],
+['Divide by 5','div','n ÷ 5 = n × 2 ÷ 10','345 ÷ 5 = 690 ÷ 10 = 69','Any number','—'],
+['Divide by 25','div','n ÷ 25 = n × 4 ÷ 100','650 ÷ 25 = 2600 ÷ 100 = 26','Any number','—'],
+['Add by compensation','add','Round up, add, then subtract the extra','498 + 367 = 500 + 367 − 2 = 865','One number is just below a round number','Not helpful if neither number is near a round value.'],
+['Subtract by compensation','sub','Round the subtrahend, then correct','832 − 298 = 832 − 300 + 2 = 534','Subtrahend near a round number','—'],
+['x% of y = y% of x','pc','x% of y = y% of x','8% of 50 = 50% of 8 = 4','Swap makes it easier','If the swapped form is not simpler.'],
+['Successive percentage change','pc','Net % = a + b + ab/100 (use signs)','+20% then −10%: 20 − 10 − 2 = +8%','Two or more changes in a row','Do not just add the percentages.'],
+['Compound interest, 2 years','pc','A = P(1 + r/100)²; CI − SI = P(r/100)²','P=10000, r=10%: CI−SI = 10000 × 0.01 = 100','2-year problems','For many years, use year-by-year calculation.'],
+['Fraction to percentage table','fr','1/2=50, 1/4=25, 1/5=20, 1/8=12.5, 1/16=6.25, 1/20=5, 1/25=4','3/8 = 3 × 12.5 = 37.5%','Fractions with these denominators','Denominators like 7 or 13 are not exact.'],
+['Divisibility by 3, 9 and 11','div','3 or 9: digit sum divisible. 11: alternating digit sum divisible by 11','2728: 2−7+2−8 = −11 → divisible by 11','Quick checks','Only tests divisibility; it does not give the quotient.'],
+['Complement to 100','sub','100 − n: subtract each digit from 9, last from 10','100 − 63: 9−6=3, 10−3=7 → 37','Subtractions from powers of 10','—'],
+['Round, then calculate','apx','Round every number first, then compute once','4987 + 3012 − 1998 ≈ 5000 + 3000 − 2000 = 6000','Approximation questions','Exact-answer questions.'],
+['Multiply by 12','mul','n × 12 = n × 10 + n × 2','34 × 12 = 340 + 68 = 408','Any number','—'],
+['Multiply by 15','mul','n × 15 = n × 10 + half of (n × 10)','24 × 15 = 240 + 120 = 360','Any number','—'],
+['Multiply by 19, 21, 29, 31 and similar','mul','n × 19 = n × 20 − n; n × 21 = n × 20 + n','16 × 19 = 320 − 16 = 304','Multiplier is 1 away from a multiple of 10','Multiplier is not close to a round number.'],
+['Multiply by 75','mul','n × 75 = (n × 3 ÷ 4) × 100','48 × 75 = 36 × 100 = 3600','n is a multiple of 4','Hard if n is not easy to divide by 4.'],
+['Multiply by 8','mul','Double three times','37 × 8: 74, 148, 296','Any number','Large numbers: use the splitting method.'],
+['Multiply by 999 or 9999','mul','n × 999 = n × 1000 − n','23 × 999 = 23000 − 23 = 22977','Multiplier is all nines','—'],
+['Multiply by 33 or 66','mul','n × 33 = (n ÷ 3) × 99','27 × 33 = 9 × 99 = 891','n divisible by 3','n not divisible by 3.'],
+['Double and halve','mul','a × b = (a × 2) × (b ÷ 2)','25 × 48 = 50 × 24 = 1200','One number is even and the other is 5 or 25','Both numbers odd.'],
+['Same tens digit, units add to 10','mul','(10a+b)(10a+c), b+c=10: a(a+1) | b×c','43 × 47: 4×5 = 20 | 3×7 = 21 → 2021','Same tens digit and units adding to 10','Other pairs of numbers. Write b×c as two digits (06, not 6).'],
+['Equal distance from a middle number','mul','(m − d)(m + d) = m² − d²','47 × 53 = 50² − 3² = 2500 − 9 = 2491','Numbers sit equally on both sides of an easy middle','Numbers are not symmetric.'],
+['Base method above 100','mul','(100+a)(100+b) = (100+a+b) | a×b','103 × 108: 111 | 24 → 11124','Both numbers slightly above 100','Numbers far from 100. Use two digits for the right part.'],
+['Base 10 method','mul','(10+a)(10+b) = (10+a+b) × 10 + a×b','12 × 14 = 16 × 10 + 8 = 168','Both numbers between 11 and 19','Numbers outside the teens.'],
+['Criss-cross for 2-digit × 2-digit','mul','(10a+b)(10c+d) = ac | ad+bc | bd (carry leftward)','23 × 14: 2 | 2×4+3×1 = 11 | 12 → 200+110+12 = 322','Any two 2-digit numbers, written in one line','Skip it when a simpler special case applies.'],
+['Multiply a 3-digit number by 11','mul','abc × 11 = a | a+b | b+c | c (carry leftward)','234 × 11 = 2 | 5 | 7 | 4 = 2574','3-digit numbers','Carry when a pair sums to 10 or more.'],
+['Break into tens and units','mul','n × (10t + u) = n×10t + n×u','67 × 13 = 670 + 201 = 871','General purpose','Skip it if a special trick fits.'],
+['Squares 51 to 59','sq','(50+k)² = 2500 + 100k + k²','53² = 2500 + 300 + 9 = 2809','51–59','Far from 50.'],
+['Squares 41 to 49','sq','(50−k)² = 2500 − 100k + k²','47² = 2500 − 300 + 9 = 2209','41–49','Far from 50.'],
+['Squares near 100','sq','(100±k)² = 10000 ± 200k + k²','103² = 10000 + 600 + 9 = 10609; 97² = 10000 − 600 + 9 = 9409','90–110','Large k.'],
+['Squares 11 to 19','sq','(10+u)² = 100 + 20u + u²','17² = 100 + 140 + 49 = 289','11–19','—'],
+['Square any 2-digit number','sq','(10a+b)² = 100a² + 20ab + b²','34² = 900 + 240 + 16 = 1156','Any 2-digit number','Use a faster trick when one applies.'],
+['Square a number ending in 1','sq','(10t+1)² = 100t² + 20t + 1','41² = 1600 + 80 + 1 = 1681','Ends in 1','—'],
+['Square a number ending in 9','sq','n² = (n+1)² − 2(n+1) + 1','69² = 4900 − 140 + 1 = 4761','Ends in 9','—'],
+['Next square from a known square','sq','(n+1)² = n² + 2n + 1; (n−1)² = n² − 2n + 1','26² = 25² + 51 = 625 + 51 = 676','You know a neighbouring square','Neighbouring square unknown.'],
+['Square a 3-digit number ending in 5','sq','(10t+5)² = t(t+1) followed by 25','145² : 14 × 15 = 210 → 21025','Ends in 5','Other endings.'],
+['Square a number ending in .5','sq','(n+0.5)² = n(n+1) + 0.25','7.5² = 56 + 0.25 = 56.25','Halves','—']];
+/* ---------- views ---------- */
+function routine(){const R2=[['5 min: tables, squares, cubes',"startRun({kind:'Daily: tables',cat:'mul',d:0,n:10,mcq:false,lim:0})"],['10 min: basic calculations',"startRun({kind:'Daily: basics',cat:'add',d:1,n:15,mcq:false,lim:0})"],['10 min: shortcut learning',"go('tri')"],['15 min: topic practice',"go('prac')"],['10 min: timed mixed calculations',"startRun({kind:'Daily: timed mixed',cat:'mix',d:2,n:30,test:1,total:180,mcq:true})"],['10 min: mistake revision',"go('rev')"]];
+return `<div class="card"><h3>Recommended daily routine</h3>`+R2.map(x=>`<div class="row"><span style="flex:1">${x[0]}</span><button class="g2" onclick="${x[1]}">Start</button></div>`).join('')+`</div>`}
+function dash(){const a=S.att,T=S.settings,s=st(a);if(!a.length)return `<h2>Dashboard</h2><div class="card"><h3>Nothing recorded yet</h3><p>Your statistics appear here after your first practice. Begin with the Foundation level.</p><button class="b" onclick="go('road')">Start learning</button></div>`+routine();
+const td=a.filter(x=>dk(x.t)==dk(Date.now())),ts=st(td),mins=Math.round(td.reduce((q,x)=>q+x.sec,0)/6)/10,days=new Set(a.map(x=>dk(x.t)));let c=0,t=Date.now();if(!days.has(dk(t)))t-=864e5;while(days.has(dk(t))){c++;t-=864e5}
+const best=Math.min(...a.filter(x=>x.ok).map(x=>x.sec),Infinity),done=Object.keys(S.prog).length,tot=LV.reduce((n,l)=>n+l[1].length,0),weak=byCat(a).filter(x=>x.n>=5&&x.acc<70).sort((x,y)=>x.acc-y.acc).slice(0,3),due=dueList().length;
+const msg=!ts.n?'You have not practised today yet. Ten questions will keep your streak going.':ts.n>=T.tq&&ts.acc>=T.ta?'Daily target met. Well done.':ts.acc<T.ta&&ts.n>=5?`Today's accuracy is ${ts.acc}%, below your ${T.ta}% target. Slow down slightly and focus on accuracy.`:`${Math.max(0,T.tq-ts.n)} more questions to reach today's target.`;
+return `<h2>Dashboard</h2><div class="card"><b>${msg}</b></div><div class="g"><div class="st"><b>${s.n}</b><span>Attempted</span></div><div class="st"><b>${s.ok}</b><span>Correct</span></div><div class="st"><b>${s.n-s.ok}</b><span>Incorrect</span></div><div class="st"><b>${s.acc}%</b><span>Accuracy</span></div><div class="st"><b>${s.avg}s</b><span>Average time</span></div><div class="st"><b>${best==Infinity?'—':best+'s'}</b><span>Best time (correct)</span></div><div class="st"><b>${mins} min</b><span>Practice today</span></div><div class="st"><b>${c}</b><span>Day streak</span></div><div class="st"><b>${done}/${tot}</b><span>Topics completed</span></div></div>
+<div class="card"><h3>Today's targets</h3><small>Questions ${ts.n}/${T.tq}</small>${bar(ts.n/T.tq*100)}<small>Time ${mins}/${T.tm} min</small>${bar(mins/T.tm*100)}<small>Accuracy ${ts.acc}% (target ${T.ta}%)</small>${bar(ts.acc/T.ta*100)}</div>
+<div class="card"><h3>Revision due: ${due}</h3>${due?`<button class="b" onclick="go('rev')">Revise now</button>`:'<small>Nothing is due.</small>'}</div>
+<div class="card"><h3>Weak topics</h3>${weak.length?weak.map(w=>`<p>${CATS[w.k]}: ${w.acc}% over ${w.n} questions <button class="g2" onclick="startRun({kind:'Practice',cat:'${w.k}',d:1,n:10,mcq:false,lim:0})">Practise</button></p>`).join(''):'<small>None yet. A topic is flagged after 5 or more questions under 70%.</small>'}</div>
+<div class="card"><h3>Recent sessions</h3>${S.sess.slice(-5).reverse().map(x=>`<p>${new Date(x.t).toLocaleString()}: ${esc(x.kind)}, ${x.ok}/${x.n} correct</p>`).join('')||'<small>No sessions.</small>'}</div>`+routine()}
+const dayOf=i=>Math.floor((Date.now()-new Date(S.prog[i].t))/864e5);
+function road(){return `<h2>Learning Roadmap</h2><p class="mu">A topic is marked complete only after you pass its test (5 questions, at least 80%). Practice buttons use the closest question category.</p>`+LV.map((l,i)=>`<div class="card"><h3>${l[0]}</h3>`+l[1].map((t,j)=>{const p=S.prog[t[0]];return `<div style="border-top:1px solid var(--bd);padding:8px 0"><b>${t[0]}</b> ${p?`<span class="tag">Completed ${new Date(p.t).toLocaleDateString()}</span> ${dayOf(t[0])>7?'<span class="tag" style="color:var(--wa)">Revision due</span>':'<span class="tag">Revision fresh</span>'}`:'<span class="tag">Not completed</span>'}<br><small>${t[2]}</small><br>${[1,2,3].map(d=>`<button class="g2" onclick="tp(${i},${j},${d})">${['','Easy','Medium','Hard'][d]}</button>`).join('')}<button class="b" onclick="tt(${i},${j})">Topic test</button></div>`}).join('')+`</div>`).join('')}
+const tp=(i,j,d)=>startRun({kind:'Topic: '+LV[i][1][j][0],cat:LV[i][1][j][1],d,n:10,mcq:false,lim:0});
+const tt=(i,j)=>startRun({kind:'Topic test',topic:LV[i][1][j][0],cat:LV[i][1][j][1],d:2,n:5,mcq:true,lim:0});
+function tri(){return `<h2>Calculation Tricks</h2><input id="ts" type="search" placeholder="Search tricks" oninput="$('#tl').innerHTML=trl(this.value,$('#tc').value)" aria-label="Search"> <select id="tc" onchange="$('#tl').innerHTML=trl($('#ts').value,this.value)"><option value="">All categories</option>${Object.keys(CATS).filter(k=>TR.some(t=>t[1]==k)).map(k=>`<option value="${k}">${CATS[k]}</option>`).join('')}</select><div id="tl" style="margin-top:12px">${trl('','')}</div>`}
+function trl(q,c){q=q.toLowerCase();const L=TR.map((t,i)=>[t,i]).filter(([t])=>(!c||t[1]==c)&&(!q||t.join(' ').toLowerCase().includes(q)));return L.length?L.map(([t,i])=>`<div class="card"><h3>${t[0]}</h3><span class="tag">${CATS[t[1]]}</span><p><b>Formula:</b> ${esc(t[2])}</p><p><b>Example:</b> ${esc(t[3])}</p><p><b>Use when:</b> ${t[4]}<br><b>Avoid when:</b> ${t[5]}</p><button class="b" onclick="startRun({kind:'Trick: ${t[0].replace(/'/g,'')}',cat:'${t[1]}',d:1,n:10,mcq:false,lim:0})">Practice</button></div>`).join(''):'<p>No tricks match your search.</p>'}
+const sel=(id,a,v)=>`<select id="${id}">${a.map(([k,l])=>`<option value="${k}"${k==v?' selected':''}>${l}</option>`).join('')}</select>`;
+function prac(){const T=S.settings;return `<h2>Practice Arena</h2><div class="card"><label>Topic</label>${sel('pc',Object.keys(CATS).map(k=>[k,CATS[k]]),'mix')}<label>Difficulty</label>${sel('pd',DIF.map((x,i)=>[i,x]),T.diff)}<label>Number of questions (1–100)</label><input id="pn" type="number" min="1" max="100" value="10"><label>Time limit per question in seconds (0 = none)</label><input id="pl" type="number" min="0" max="300" value="${T.lim}"><label>Answer mode</label>${sel('pm',[['1','Multiple choice'],['0','Direct answer']],'1')}<br><br><button class="b" onclick="startP()">Start practice</button></div>`}
+function startP(){const n=+$('#pn').value,l=+$('#pl').value;if(!(n>=1&&n<=100)||!(l>=0&&l<=300))return toast('Questions must be 1–100 and time 0–300 seconds');startRun({kind:'Practice',cat:$('#pc').value,d:+$('#pd').value,n,mcq:$('#pm').value=='1',lim:l})}
+function test(){return `<h2>Speed Test</h2><div class="card"><label>Duration (minutes, 0.5–60)</label><input id="td" type="number" step="0.5" min="0.5" max="60" value="3"><br>${[1,3,5,10].map(m=>`<button class="g2" onclick="$('#td').value=${m}">${m} min</button>`).join('')}<label>Number of questions</label>${sel('tn',[10,20,30,50].map(x=>[x,x]),20)}<label>Difficulty</label>${sel('tf',DIF.map((x,i)=>[i,x]),S.settings.diff)}<label>Answer mode</label>${sel('tmd',[['1','Multiple choice'],['0','Direct answer']],'1')}<p class="mu">Mixed questions. Solutions are shown only after the test ends, which happens automatically when time runs out.</p><button class="b" onclick="startT()">Start test</button></div>`+(S.tests.length?`<div class="card"><h3>Past tests</h3>${S.tests.slice(-5).reverse().map(t=>`<p>${new Date(t.t).toLocaleDateString()}: score ${t.score}, ${t.ok}/${t.att} correct, ${t.qpm} per min</p>`).join('')}</div>`:'')}
+function startT(){const m=+$('#td').value;if(!(m>=.5&&m<=60))return toast('Duration must be 0.5–60 minutes');startRun({kind:'Speed test',cat:'mix',d:+$('#tf').value,n:+$('#tn').value,test:1,total:Math.round(m*60),mcq:$('#tmd').value=='1'})}
+function mlist(){const q=mf.s.toLowerCase(),L=S.mist.filter(m=>(!mf.c||m.cat==mf.c)&&(!q||(m.q+m.expl).toLowerCase().includes(q))).sort((a,b)=>b.date-a.date);return L.length?L.map(m=>`<div class="card"><b>${esc(m.q)}</b><br><small>Your answer: ${m.user==null?'none':f(m.user)}. Correct: ${f(m.ans)}. ${CATS[m.cat]}, ${DIF[m.d]}, ${new Date(m.date).toLocaleDateString()}. Mistakes: ${m.count}. Status: ${m.status}.</small><p>${esc(m.expl)}</p><button class="g2" onclick="retry(${m.id})">Retry</button><button class="g2" onclick="und(${m.id})">Mark understood</button><button class="g2" onclick="delM(${m.id})">Delete</button></div>`).join(''):'<p>No mistakes match.</p>'}
+function mis(){const rep=S.mist.filter(m=>m.count>1).sort((a,b)=>b.count-a.count).slice(0,3);return `<h2>Mistake Notebook</h2>${S.mist.length?`<input type="search" placeholder="Search" oninput="mf.s=this.value;$('#ml').innerHTML=mlist()" aria-label="Search mistakes"> <select onchange="mf.c=this.value;$('#ml').innerHTML=mlist()"><option value="">All topics</option>${Object.keys(CATS).map(k=>`<option value="${k}">${CATS[k]}</option>`).join('')}</select> <button class="b" onclick="retryAll()">Retry all pending</button>${rep.length?`<div class="card"><h3>Repeated mistakes</h3>${rep.map(m=>`<p>${esc(m.q)}: ${m.count} times</p>`).join('')}</div>`:''}<div id="ml">${mlist()}</div>`:'<div class="card"><p>No mistakes yet. Wrong answers are saved here automatically.</p></div>'}`}
+const mk=l=>({kind:'Mistake retry',cat:'mix',d:1,pre:l.map(m=>({q:m.q,ans:m.ans,expl:m.expl,sc:m.sc,cat:m.cat,d:m.d})),n:l.length,mcq:false,lim:0});
+const retry=id=>startRun(mk([S.mist.find(m=>m.id==id)]));
+function retryAll(){const l=S.mist.filter(m=>m.status!='understood');if(!l.length)return toast('No pending mistakes');startRun(mk(l))}
+function und(id){S.mist.find(m=>m.id==id).status='understood';sv();go('mis')}
+function delM(id){if(!confirm('Delete this mistake record?'))return;S.mist=S.mist.filter(m=>m.id!=id);sv();go('mis')}
+function rev(){const L=dueList(),up=S.mist.filter(m=>m.status!='understood').length-L.length;if(!L.length)return `<h2>Revision Center</h2><div class="card"><p>${S.mist.length?`Nothing is due now. ${up} item(s) are scheduled for later.`:'No revision items yet. Wrong answers are scheduled here automatically.'}</p></div>`;const m=L[0];return `<h2>Revision Center</h2><div class="card"><p>${L.length} due now</p><div class="q">${esc(m.q)}</div>`+(rv==m.id?`<p><b>Answer: ${f(m.ans)}</b></p><p>${esc(m.expl)}</p><p><b>Shortcut:</b> ${esc(m.sc)}</p><div class="row">${['Again','Difficult','Good','Easy'].map((g,i)=>`<button class="b" onclick="grade(${m.id},${i})">${g}</button>`).join('')}</div>`:`<button class="b" onclick="rv=${m.id};go('rev')">Show answer</button>`)+`</div>`}
+function grade(id,i){const m=S.mist.find(x=>x.id==id),I=[.17,1,3,7,14],n=Date.now();if(i==0){m.stage=0;m.due=n+I[0]*864e5}else if(i==1)m.due=n+Math.max(1,I[m.stage])*864e5;else{m.stage+=i==2?1:2;if(m.stage>=5)m.status='understood';else m.due=n+I[m.stage]*864e5}rv=null;sv();go('rev')}
+function bars(v,l,fm){const mx=Math.max(...v,0);return `<div class="bars">${v.map((x,i)=>`<div><i style="height:${mx?x/mx*100:0}%" title="${l[i]}: ${fm(x)}"></i><small>${l[i]}</small></div>`).join('')}</div>`}
+function ana(){const a=S.att;if(!a.length)return `<h2>Performance Analytics</h2><div class="card"><p>No data yet. Charts appear after your first practice session.</p></div>`;
+const D=[],lb=[];for(let i=13;i>=0;i--){const t=Date.now()-i*864e5;D.push(st(a.filter(x=>dk(x.t)==dk(t))));lb.push(new Date(t).getDate())}
+const w=st(a.filter(x=>x.t>Date.now()-7*864e5)),pw=st(a.filter(x=>x.t<=Date.now()-7*864e5&&x.t>Date.now()-14*864e5)),m=st(a.filter(x=>x.t>Date.now()-30*864e5)),C=byCat(a).filter(x=>x.n>=5).sort((x,y)=>x.acc-y.acc),obs=[];
+if(C.length>1){obs.push(`Weakest topic so far: ${CATS[C[0].k]} (${C[0].acc}%). Strongest: ${CATS[C[C.length-1].k]} (${C[C.length-1].acc}%).`);const sl=[...C].sort((x,y)=>y.avg-x.avg)[0];obs.push(`Slowest topic: ${CATS[sl.k]} at ${sl.avg}s per question.`)}
+if(w.n&&pw.n)obs.push(`Accuracy last 7 days: ${w.acc}%, compared with ${pw.acc}% in the 7 days before.`);
+const okA=st(a.filter(x=>x.ok)).avg,bad=a.filter(x=>!x.ok);if(bad.length>=10&&st(bad).avg<okA*.8)obs.push('Your wrong answers were quicker than your correct ones on average. This may suggest rushing, but it is not proof.');
+if(!obs.length)obs.push('Practise 5 or more questions in a topic to unlock topic-level observations.');
+return `<h2>Performance Analytics</h2><div class="card"><h3>Questions per day (last 14 days)</h3>${bars(D.map(x=>x.n),lb,x=>x)}<h3>Accuracy % per day</h3>${bars(D.map(x=>x.acc),lb,x=>x+'%')}<h3>Average seconds per day</h3>${bars(D.map(x=>x.avg),lb,x=>x+'s')}</div><div class="g"><div class="st"><b>${w.n}</b><span>Questions, last 7 days (${w.acc}%, ${w.avg}s)</span></div><div class="st"><b>${m.n}</b><span>Questions, last 30 days (${m.acc}%, ${m.avg}s)</span></div></div><div class="card"><h3>By topic</h3>${byCat(a).sort((x,y)=>x.acc-y.acc).map(x=>`<p>${CATS[x.k]}: ${x.acc}% accuracy, ${x.avg}s average, ${x.n} questions${bar(x.acc)}</p>`).join('')}</div><div class="card"><h3>Observations</h3>${obs.map(o=>`<p>${esc(o)}</p>`).join('')}</div><div class="card"><h3>Personal best history</h3>${S.tests.length?S.tests.map(t=>[t.t,t.score]).reduce((r,[t,s])=>(!r.length||s>r[r.length-1][1]?r.push([t,s]):0,r),[]).map(([t,s])=>`<p>${new Date(t).toLocaleDateString()}: score ${s}</p>`).join(''):'<small>Complete a speed test to start your history.</small>'}</div>`}
+function set(){const T=S.settings;return `<h2>Settings</h2><div class="card"><label>Theme</label>${sel('st',[['light','Light'],['dark','Dark']],T.theme)}<label>Sound</label>${sel('ss',[['1','On'],['0','Off']],T.sound?'1':'0')}<label>Default difficulty</label>${sel('sd',DIF.map((x,i)=>[i,x]),T.diff)}<label>Default seconds per question (0 = none)</label><input id="sl" type="number" min="0" max="300" value="${T.lim}"><label>Daily target: questions</label><input id="sq" type="number" min="1" max="1000" value="${T.tq}"><label>Daily target: minutes</label><input id="sm" type="number" min="1" max="600" value="${T.tm}"><label>Daily target: accuracy %</label><input id="sa" type="number" min="1" max="100" value="${T.ta}"><br><br><button class="b" onclick="saveSet()">Save settings</button></div>
+<div class="card"><h3>Backup</h3><p class="mu">Data is stored in this browser (IndexedDB). Clearing site data deletes it, so export regularly.</p><button class="b" onclick="exp()">Export JSON</button><input id="imp" type="file" accept=".json" onchange="imp(this.files[0])" aria-label="Import"><br><button class="g2" style="color:var(--bad);border-color:var(--bad)" onclick="reset()">Reset all data</button></div>
+<div class="card"><h3>About coaching</h3><p class="mu">Analysis here is rule-based and runs entirely on your device. No AI service is connected and no data leaves this page.</p></div>`}
+function saveSet(){const T=S.settings,v=id=>+$(id).value,tq=v('#sq'),tm2=v('#sm'),ta=v('#sa'),l=v('#sl');if(!(tq>=1&&tm2>=1&&ta>=1&&ta<=100&&l>=0&&l<=300))return toast('Check your values');Object.assign(T,{theme:$('#st').value,sound:$('#ss').value=='1',diff:v('#sd'),lim:l,tq,tm:tm2,ta});document.documentElement.dataset.theme=T.theme;save();toast('Settings saved')}
+function exp(){const b=new Blob([JSON.stringify({app:'calcmaster',v:1,data:S})],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='calculation-master-backup-'+dk(Date.now())+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1e3)}
+function imp(file){if(!file)return;const r=new FileReader();r.onload=()=>{try{const o=JSON.parse(r.result).data;if(!o||typeof o.settings!='object'||!Array.isArray(o.att)||!Array.isArray(o.mist)||!Array.isArray(o.tests)||typeof o.prog!='object')throw 0;if(!confirm('Replace ALL current data with this backup?'))return;S={...DEF(),...o,settings:{...DEF().settings,...o.settings}};if(!Array.isArray(S.sess))S.sess=[];document.documentElement.dataset.theme=S.settings.theme;save();toast('Backup imported');go('dash')}catch(e){toast('Invalid backup file')}};r.readAsText(file)}
+function reset(){if(!confirm('Delete ALL progress, mistakes and history? Export a backup first.'))return;if(!confirm('This cannot be undone. Continue?'))return;S=DEF();document.documentElement.dataset.theme='light';save();go('dash')}
+/* ---------- navigation ---------- */
+const VW={dash,road,tri,prac,test,mis,rev,ana,set};
+function go(v){if(run&&!run.done&&!confirm('Leave this session? Answers so far are saved.'))return;stop();cur=v;document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v==v));const ab=document.querySelector('#nav button.on');if(ab&&ab.scrollIntoView)ab.scrollIntoView({inline:'center',block:'nearest'});main.innerHTML=VW[v]();window.scrollTo(0,0)}
+(async()=>{try{await idb();for(const k of Object.keys(S)){const v=await dbGet(k);if(v!=null)S[k]=k=='settings'?{...DEF().settings,...v}:v}}catch(e){}
+document.documentElement.dataset.theme=S.settings.theme;$('#nav').innerHTML='<h1>Calculation Master</h1>'+Object.keys(V).map(k=>`<button data-v="${k}" onclick="go('${k}')"><span>${V[k][1]}</span><em>${V[k][0]}</em></button>`).join('')+'<small id="sv">'+(db?'✓ Storage ready':'Using local storage')+'</small>';go('dash')})();
+</script></body></html>
